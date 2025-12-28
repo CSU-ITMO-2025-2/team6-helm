@@ -25,24 +25,17 @@ spec:
             - name: PYTHONPATH
               value: "/app"
             - name: NATS_URL
-{{/*              value: {{ .Values.global.nats.url | quote }}*/}}
               value: {{ .Values.global.nats.url | quote }}
-{{/*              value: "nats-srv:4222"*/}}
             - name: MODEL_PATH
               value: {{ .Values.ml.modelPath | default "/app/model/best.pt" }}
           resources:
             requests:
-              cpu: "1000m"
+              cpu: "500m"
               memory: "2Gi"
             limits:
-              cpu: "2000m"
+              cpu: "600m"
               memory: "4Gi"
-{{/*          volumeMounts:*/}}
-{{/*            - name: model-volume*/}}
-{{/*              mountPath: /app/model*/}}
-{{/*              readOnly: true*/}}
-{{/*            - name: logs-volume*/}}
-{{/*              mountPath: /app/logs*/}}
+
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
@@ -64,12 +57,6 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
-{{/*      volumes:*/}}
-{{/*        - name: model-volume*/}}
-{{/*          persistentVolumeClaim:*/}}
-{{/*            claimName: {{ .Values.ml.modelPvc | default "ml-model-pvc" }}*/}}
-{{/*        - name: logs-volume*/}}
-{{/*          emptyDir: { }*/}}
 ---
 apiVersion: v1
 kind: Service
