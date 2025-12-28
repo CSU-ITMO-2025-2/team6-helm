@@ -23,8 +23,8 @@ spec:
             - name: PG_DSN
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
-                  key: pg-dsn
+                  name: {{ include "team6-helm.fullname" . }}-postgres-secrets
+                  key: PG_DSN
 
             - name: GRPC_HOST
               value: {{ .Values.study.host | quote }}
@@ -48,6 +48,7 @@ spec:
             # NATS
             - name: NATS_URI
               value: {{ .Values.global.nats.url | quote }}
+
 
           resources:
             requests:

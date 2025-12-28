@@ -14,6 +14,15 @@ global:
     server_url: "localhost"
     remote_url: "https://localhost/minio"
 
+externalSecrets:
+  secretStoreRef:
+    name: vault-team7
+    kind: SecretStore
+
+serviceAccount:
+  create: true
+  name: ""
+
 ingress:
   enabled: true
   className: nginx
