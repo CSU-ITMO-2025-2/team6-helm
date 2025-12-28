@@ -1,0 +1,97 @@
+global:
+  postgres:
+    host: "79.174.89.43"
+    port: "18809"
+    database: "team6_db"
+    user: "team6"
+
+  nats:
+    url: "nats://nats-srv:4222"
+
+  minio:
+    host: "minio:9000"
+    use_ssl: false
+    server_url: "localhost"
+    remote_url: "https://localhost/minio"
+
+ingress:
+  enabled: true
+  className: nginx
+  host: "team6.kuberpractive.ru"
+
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    #    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer | quote }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+  tls:
+    enabled: false
+    secretName: "main-service-tls"
+    clusterIssuer: "letsencrypt-prod"
+
+study:
+  image: ghcr.io/csu-itmo-2025-2/team6-study-service:latest
+  host: 0.0.0.0
+  port: 58080
+  replicas: 1
+  serviceType: ClusterIP
+  nodePort: 30083
+  imagePullPolicy: Always
+
+main:
+  image: ghcr.io/csu-itmo-2025-2/team6-main-service:latest
+  host: "0.0.0.0"
+  port: "5000"
+  timeout: "30s"
+  idle_timeout: "30s"
+
+  replicas: 1
+  serviceType: ClusterIP
+  nodePort: 30084
+  study_service_host: study-service
+  study_service_port: 58080
+  imagePullPolicy: Always
+
+ml:
+  image: ghcr.io/csu-itmo-2025-2/team6-ml-service:latest
+  port: 8000
+  replicas: 1
+  serviceType: ClusterIP
+  nodePort: 30085
+  modelPath: "/app/model/best.pt"
+  imagePullPolicy: Always
+  nats: nats://nats-srv:4222
+
+nats:
+  image: "nats:2.10-alpine"
+  replicas: 1
+  serviceType: ClusterIP
+  clientNodePort: 30422
+  monitorNodePort: 30822
+  clusterName: "nats-cluster"
+  imagePullPolicy: IfNotPresent
+
+minio:
+  enabled: true
+  image: quay.io/minio/minio:latest
+  replicas: 1
+  serviceType: ClusterIP
+  consolePort: 9090
+  apiPort: 9000
+  nodePort: 30443
+
+  storageSize: "20Gi"
+  pvcName: "minio-pvc"
+  storageClassName: ""
+
+  mountPath: "/data"
+  imagePullPolicy: IfNotPresent
+
+  consoleEnabled: true

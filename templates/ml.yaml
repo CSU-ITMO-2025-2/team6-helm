@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-service
+spec:
+  replicas: {{ .Values.ml.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: ml-service
+  template:
+    metadata:
+      labels:
+        app: ml-service
+    spec:
+      containers:
+        - name: ml-service
+          image: {{ .Values.ml.image }}
+          imagePullPolicy: {{ .Values.ml.imagePullPolicy | default "IfNotPresent" }}
+          command: [ "python", "-u", "main.py" ]
+          ports:
+            - containerPort: {{ .Values.ml.port | default 8000 }}
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: PYTHONPATH
+              value: "/app"
+            - name: NATS_URL
+{{/*              value: {{ .Values.global.nats.url | quote }}*/}}
+              value: {{ .Values.global.nats.url | quote }}
+{{/*              value: "nats-srv:4222"*/}}
+            - name: MODEL_PATH
+              value: {{ .Values.ml.modelPath | default "/app/model/best.pt" }}
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "2Gi"
+            limits:
+              cpu: "2000m"
+              memory: "4Gi"
+{{/*          volumeMounts:*/}}
+{{/*            - name: model-volume*/}}
+{{/*              mountPath: /app/model*/}}
+{{/*              readOnly: true*/}}
+{{/*            - name: logs-volume*/}}
+{{/*              mountPath: /app/logs*/}}
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          livenessProbe:
+            exec:
+              command:
+                - python
+                - -c
+                - "import socket; s = socket.socket(socket.AF_INET, socket.SOCK_STREAM); s.connect(('localhost', 8000)) if {{ .Values.ml.port | default 8000 }} == 8000 else True"
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - python
+                - -c
+                - "import socket; s = socket.socket(socket.AF_INET, socket.SOCK_STREAM); s.connect(('localhost', 8000)) if {{ .Values.ml.port | default 8000 }} == 8000 else True"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+{{/*      volumes:*/}}
+{{/*        - name: model-volume*/}}
+{{/*          persistentVolumeClaim:*/}}
+{{/*            claimName: {{ .Values.ml.modelPvc | default "ml-model-pvc" }}*/}}
+{{/*        - name: logs-volume*/}}
+{{/*          emptyDir: { }*/}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-service
+spec:
+  type: {{ .Values.ml.serviceType | default "ClusterIP" }}
+  ports:
+    - port: {{ .Values.ml.port | default 8000 }}
+      targetPort: {{ .Values.ml.port | default 8000 }}
+      {{- if eq (.Values.ml.serviceType | default "ClusterIP") "NodePort" }}
+      nodePort: {{ .Values.ml.nodePort | default 30085 }}
+      {{- end }}
+  selector:
+    app: ml-service
