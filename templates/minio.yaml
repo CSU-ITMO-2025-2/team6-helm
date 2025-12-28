@@ -24,9 +24,15 @@ spec:
             - ":{{ .Values.minio.consolePort | default 9090 }}"
           env:
             - name: MINIO_ROOT_USER
-              value: {{ .Values.minio.rootUser | default "minioadmin" }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "team6-helm.fullname" . }}-minio-secrets
+                  key: ROOT_USER
             - name: MINIO_ROOT_PASSWORD
-              value: {{ .Values.minio.rootPassword | default "minioadmin" }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "team6-helm.fullname" . }}-minio-secrets
+                  key: ROOT_PASSWORD
           ports:
             - containerPort: {{ .Values.minio.apiPort | default 9000 }}
               name: api
@@ -84,7 +90,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.minio.storageSize | default "20Gi" }}
+      storage: {{ .Values.minio.storageSize | default "2Gi" }}
   {{- if .Values.minio.storageClassName }}
   storageClassName: {{ .Values.minio.storageClassName }}
   {{- end }}

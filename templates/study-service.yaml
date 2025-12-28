@@ -41,9 +41,15 @@ spec:
             - name: MINIO_REMOTE_URL
               value: {{ .Values.global.minio.remote_url | quote }}
             - name: MINIO_ROOT_USER
-              value: {{ .Values.global.minio.rootUser | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "team6-helm.fullname" . }}-minio-secrets
+                  key: ROOT_USER
             - name: MINIO_ROOT_PASSWORD
-              value: {{ .Values.global.minio.rootPassword | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "team6-helm.fullname" . }}-minio-secrets
+                  key: ROOT_PASSWORD
 
             # NATS
             - name: NATS_URI

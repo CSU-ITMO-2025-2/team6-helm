@@ -96,7 +96,7 @@ minio:
   apiPort: 9000
   nodePort: 30443
 
-  storageSize: "20Gi"
+  storageSize: "1Gi"
   pvcName: "minio-pvc"
   storageClassName: ""
 
