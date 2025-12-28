@@ -16,7 +16,7 @@ global:
 
 externalSecrets:
   secretStoreRef:
-    name: vault-team7
+    name: vault-team6
     kind: SecretStore
 
 serviceAccount:
