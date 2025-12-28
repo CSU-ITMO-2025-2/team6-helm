@@ -81,16 +81,16 @@ spec:
   selector:
     app: minio
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .Values.minio.pvcName | default "minio-pvc" }}
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.minio.storageSize | default "2Gi" }}
-  {{- if .Values.minio.storageClassName }}
-  storageClassName: {{ .Values.minio.storageClassName }}
-  {{- end }}
+{{/*apiVersion: v1*/}}
+{{/*kind: PersistentVolumeClaim*/}}
+{{/*metadata:*/}}
+{{/*  name: {{ .Values.minio.pvcName | default "minio-pvc" }}*/}}
+{{/*spec:*/}}
+{{/*  accessModes:*/}}
+{{/*    - ReadWriteOnce*/}}
+{{/*  resources:*/}}
+{{/*    requests:*/}}
+{{/*      storage: {{ .Values.minio.storageSize | default "2Gi" }}*/}}
+{{/*  {{- if .Values.minio.storageClassName }}*/}}
+{{/*  storageClassName: {{ .Values.minio.storageClassName }}*/}}
+{{/*  {{- end }}*/}}
