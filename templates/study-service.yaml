@@ -32,24 +32,23 @@ spec:
               value: {{ .Values.study.port | quote }}
 
             # MinIO конфигурация
-            - name: MINIO_HOST
-              value: {{ .Values.global.minio.host | quote }}
-            - name: MINIO_USE_SSL
-              value: {{ .Values.global.minio.use_ssl | quote }}
-            - name: MINIO_SERVER_URL
-              value: {{ .Values.global.minio.server_url | quote }}
-            - name: MINIO_REMOTE_URL
-              value: {{ .Values.global.minio.remote_url | quote }}
-            - name: MINIO_ROOT_USER
+            - name: S3_USE_SSL
+              value: "true"
+            - name: S3_BUCKET
+              value: team6
+            - name: S3_ENDPOINT
+              value: s3.regru.cloud
+
+            - name: S3_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ include "team6-helm.fullname" . }}-minio-secrets
-                  key: ROOT_USER
-            - name: MINIO_ROOT_PASSWORD
+                  key: ACCESS_KEY_ID
+            - name: S3_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ include "team6-helm.fullname" . }}-minio-secrets
-                  key: ROOT_PASSWORD
+                  key: SECRET_ACCESS_KEY
 
             # NATS
             - name: NATS_URI
