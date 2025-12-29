@@ -44,7 +44,7 @@ spec:
               memory: "256Mi"
             limits:
               cpu: "300m"
-              memory: "256Gi"
+              memory: "1Gi"
           volumeMounts:
             - name: minio-data
               mountPath: /data
