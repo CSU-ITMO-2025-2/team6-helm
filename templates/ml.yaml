@@ -33,8 +33,8 @@ spec:
               cpu: "500m"
               memory: "2Gi"
             limits:
-              cpu: "600m"
-              memory: "4Gi"
+              cpu: "500m"
+              memory: "2Gi"
 
           securityContext:
             runAsUser: 1000
