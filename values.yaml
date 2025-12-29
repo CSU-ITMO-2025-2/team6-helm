@@ -24,7 +24,6 @@ serviceAccount:
   name: ""
 
 ingress:
-  enabled: true
   className: nginx
   host: "team6.kuberpractive.ru"
 
