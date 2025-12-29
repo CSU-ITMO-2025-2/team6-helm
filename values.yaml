@@ -23,6 +23,8 @@ serviceAccount:
   create: true
   name: ""
 
+namespace: team6-ns
+
 ingress:
   className: nginx
   host: "team-6.kubepractice.ru"
@@ -36,13 +38,11 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
-    #    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.clusterIssuer | quote }}
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 
   tls:
     enabled: false
-    secretName: "main-service-tls"
-    clusterIssuer: "letsencrypt-prod"
+    secretName: tls-secret
 
 study:
   image: ghcr.io/csu-itmo-2025-2/team6-study-service:latest
@@ -59,6 +59,7 @@ main:
   port: "5000"
   timeout: "30s"
   idle_timeout: "30s"
+  name: main-service
 
   replicas: 1
   serviceType: ClusterIP
