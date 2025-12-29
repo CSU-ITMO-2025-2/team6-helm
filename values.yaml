@@ -25,7 +25,7 @@ serviceAccount:
 
 ingress:
   className: nginx
-  host: "team6.kuberpractive.ru"
+  host: "team-6.kubepractice.ru"
 
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
